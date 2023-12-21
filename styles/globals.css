@@ -1,0 +1,14 @@
+html,
+body,
+* {
+  padding: 3px;
+  margin: 0;
+}
+
+a {
+  color: inherit;
+}
+
+* {
+  box-sizing: border-box;
+}

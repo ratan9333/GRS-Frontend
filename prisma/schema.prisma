@@ -1,0 +1,42 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "cockroachdb"
+  url      = env("DATABASE_URL")
+}
+
+model users {
+  id           Int       @id @unique @default(sequence())
+  email        String
+  password     String
+  name         String?
+  phone_number String?
+  role         UserRole? @default(USER)
+}
+
+model api_data {
+  id           Int          @id @unique @default(sequence())
+  request_time DateTime     @default(now()) @db.Timestamp(6)
+  name         String?
+  phone_number String?
+  issue_type   String?
+  location     String?
+  raw_data     String?
+  assigned_to  String?
+  status       IssueStatus? @default(OPEN)
+}
+
+enum IssueStatus {
+  OPEN
+  ASSIGNED
+  REVIEWED
+  CLOSED
+  REJECTED
+}
+
+enum UserRole {
+  ADMIN
+  USER
+}

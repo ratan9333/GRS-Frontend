@@ -1,0 +1,9 @@
+/* styles.css (or your CSS file) */
+
+.full-width-link {
+    display: block; /* Make the link fill the cell */
+    width: 100%;
+    height: 100%;
+    text-decoration: none; /* Optional: removes underline from links */
+    color: inherit; /* Optional: keeps the text color consistent */
+}
