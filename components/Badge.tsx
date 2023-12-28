@@ -17,3 +17,38 @@ export function GradientBatch({ assigned }: AssignedBatchProps) {
     </Badge>
   );
 }
+
+export function Statusbatch({ status }: { status: string }) {
+  // OPEN
+  // ASSIGNED
+  // REVIEWED
+  // CLOSED
+  // REJECTED
+  // console.log({ status });
+  let color;
+  switch (status.toUpperCase()) {
+    case "OPEN":
+      color = "blue";
+      break;
+    case "ASSIGNED":
+      color = "cyan";
+      break;
+    case "REVIEWED":
+      color = "lime";
+      break;
+    case "CLOSED":
+      color = "green";
+      break;
+    case "REJECTED":
+      color = "red";
+      break;
+    default:
+      color = "blue";
+      break;
+  }
+  return (
+    <Badge color={color} size="sm">
+      {status}
+    </Badge>
+  );
+}

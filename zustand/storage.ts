@@ -8,8 +8,6 @@ interface Store {
 export const useStore = create<Store>((set) => ({
   user: {},
   addToUser: (data: Record<string, any>) => {
-    set((state) => ({
-      ...data,
-    }));
+    set((state) => ({ user: { ...state.user, ...data } }));
   },
 }));

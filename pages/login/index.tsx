@@ -1,27 +1,34 @@
 import { Button, Card, Space, TextInput, Title, rem } from "@mantine/core";
 import { IconAt, IconPasswordFingerprint } from "@tabler/icons-react";
 import { useStore } from "../../zustand/storage";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { userLogin } from "../../components/apiCalls/login";
 import { useRouter } from "next/navigation";
+import router from "next/router";
 
 export default function LoginPage() {
-  const icon = <IconAt style={{ width: rem(16), height: rem(16) }} />;
-  const iconPassword = <IconPasswordFingerprint style={{ width: rem(16), height: rem(16) }} />;
+  const icon = <IconAt style={{ width: rem(22), height: rem(22) }} />;
+  const iconPassword = <IconPasswordFingerprint style={{ width: rem(22), height: rem(22) }} />;
   const [credentials, setCredentials] = useState({ email: "", password: "" });
-  const { addToUser } = useStore();
+  // const { addToUser } = useStore();
   const [throwError, setThrowError] = useState(false);
   const { push } = useRouter();
 
   async function login() {
     const user = await userLogin(credentials.email, credentials.password);
-    console.log("returned ", { user });
     if (!user) setThrowError(true);
     if (user) {
-      addToUser(user);
+      localStorage.setItem("userData", JSON.stringify(user));
       push("/");
     }
   }
+
+  useEffect(() => {
+    const storedData = localStorage.getItem("userData");
+    const user = JSON.parse(storedData);
+    console.log({ userhome: user });
+    if ((user as any)?.name) router.push("/");
+  }, []);
 
   return (
     <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "60vh" }}>
