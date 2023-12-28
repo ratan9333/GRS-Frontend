@@ -1,5 +1,5 @@
 // "use client";
-import { Button, Card, Divider, Grid, Group, Image, Loader, Modal, Select, Stack, Table, Title } from "@mantine/core";
+import { Button, Card, Center, Divider, Grid, Group, Image, Loader, Modal, Select, Stack, Table, Text, Title } from "@mantine/core";
 import { IssueStatus } from "@prisma/client";
 import { IconArrowBack } from "@tabler/icons-react";
 import Link from "next/link";
@@ -86,10 +86,20 @@ export default function Issue() {
             </Group>
             <Card.Section>
               <Modal opened={opened} onClose={close}>
-                <Image
-                  src={(data as any).imageUrl ?? "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Image_not_available.png/800px-Image_not_available.png?20210219185637"}
-                  alt="Norway"
-                />
+                {!(data as any).imageUrl && <Text style={{ textAlign: "center" }}>No Image Uploaded</Text>}
+                {(data as any).imageUrl && (
+                  <>
+                    <Image
+                      src={
+                        (data as any).imageUrl ?? "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Image_not_available.png/800px-Image_not_available.png?20210219185637"
+                      }
+                      alt="Norway"
+                    />
+                    <Center>
+                      <Button onClick={() => window.open((data as any).imageUrl, "_blank")}>Download</Button>
+                    </Center>
+                  </>
+                )}
               </Modal>
               <div onClick={open} style={{ cursor: "pointer" }}>
                 <Image
