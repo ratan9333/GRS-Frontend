@@ -84,7 +84,7 @@ export default function Issue() {
             </Group>
             <Card.Section>
               <Image
-                src={(data as any).imageUrl ?? "https://images.pexels.com/photos/281260/pexels-photo-281260.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"}
+                src={(data as any).imageUrl ?? "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Image_not_available.png/800px-Image_not_available.png?20210219185637"}
                 height={400}
                 alt="Norway"
               />

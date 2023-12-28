@@ -1,4 +1,4 @@
-import { Button, Card, Space, TextInput, Title, rem } from "@mantine/core";
+import { Button, Card, PasswordInput, Space, TextInput, Title, rem } from "@mantine/core";
 import { IconAt, IconPasswordFingerprint } from "@tabler/icons-react";
 import { useStore } from "../../zustand/storage";
 import { useEffect, useState } from "react";
@@ -44,12 +44,10 @@ export default function LoginPage() {
             setCredentials({ ...credentials, email: event.currentTarget.value });
           }}
         />
-        <TextInput
+        <PasswordInput
           mt="md"
-          rightSectionPointerEvents="none"
           leftSection={iconPassword}
           label="Password"
-          placeholder="Password"
           onChange={(event) => {
             setCredentials({ ...credentials, password: event.currentTarget.value });
           }}
