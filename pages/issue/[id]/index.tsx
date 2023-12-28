@@ -1,5 +1,5 @@
 // "use client";
-import { Button, Card, Divider, Grid, Group, Image, Loader, Select, Stack, Table, Title } from "@mantine/core";
+import { Button, Card, Divider, Grid, Group, Image, Loader, Modal, Select, Stack, Table, Title } from "@mantine/core";
 import { IssueStatus } from "@prisma/client";
 import { IconArrowBack } from "@tabler/icons-react";
 import Link from "next/link";
@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { GradientBatch, Statusbatch } from "../../../components/Badge";
 import { assignIssue, updateStatus } from "../../../components/apiCalls/assignIssue";
 import { getOneIssuesData } from "../../../components/apiCalls/fetchOneIssue";
+import { useDisclosure } from "@mantine/hooks";
 
 export default function Issue() {
   const params = useParams();
@@ -19,6 +20,7 @@ export default function Issue() {
   const [status, setStatus] = useState("");
   const [loggedUser, setLoggedUser] = useState({});
   const [isLoading, setIsLoading] = useState(true);
+  const [opened, { open, close }] = useDisclosure(false);
 
   async function fetchData() {
     const res = await getOneIssuesData(issue_id);
@@ -83,11 +85,19 @@ export default function Issue() {
               <Statusbatch status={(data as any).status ?? "-"} />
             </Group>
             <Card.Section>
-              <Image
-                src={(data as any).imageUrl ?? "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Image_not_available.png/800px-Image_not_available.png?20210219185637"}
-                height={400}
-                alt="Norway"
-              />
+              <Modal opened={opened} onClose={close}>
+                <Image
+                  src={(data as any).imageUrl ?? "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Image_not_available.png/800px-Image_not_available.png?20210219185637"}
+                  alt="Norway"
+                />
+              </Modal>
+              <div onClick={open} style={{ cursor: "pointer" }}>
+                <Image
+                  src={(data as any).imageUrl ?? "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Image_not_available.png/800px-Image_not_available.png?20210219185637"}
+                  height={400}
+                  alt="Norway"
+                />
+              </div>
             </Card.Section>
             <Stack>
               <div>
