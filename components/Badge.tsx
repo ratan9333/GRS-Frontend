@@ -19,12 +19,6 @@ export function GradientBatch({ assigned }: AssignedBatchProps) {
 }
 
 export function Statusbatch({ status }: { status: string }) {
-  // OPEN
-  // ASSIGNED
-  // REVIEWED
-  // CLOSED
-  // REJECTED
-  // console.log({ status });
   let color;
   switch (status.toUpperCase()) {
     case "OPEN":

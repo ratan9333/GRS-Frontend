@@ -1,5 +1,6 @@
 // "use client";
 import { Button, Card, Center, Divider, Grid, Group, Image, Loader, Modal, Select, Stack, Table, Text, Title } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import { IssueStatus } from "@prisma/client";
 import { IconArrowBack } from "@tabler/icons-react";
 import Link from "next/link";
@@ -9,7 +10,6 @@ import { useEffect, useState } from "react";
 import { Statusbatch } from "../../../components/Badge";
 import { assignIssue, updateStatus } from "../../../components/apiCalls/assignIssue";
 import { getOneIssuesData } from "../../../components/apiCalls/fetchOneIssue";
-import { useDisclosure } from "@mantine/hooks";
 
 export default function Issue() {
   const params = useParams();

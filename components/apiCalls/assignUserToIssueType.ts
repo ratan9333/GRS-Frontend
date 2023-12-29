@@ -1,10 +1,9 @@
 import axios from "axios";
-import { URL } from "./getIssues";
+import { ASSIGN_USER_TO_ISSUE_TYPE_URL } from "./helpers";
 
 export async function assignUserToIssueType(issue_type: string, user_id: number | string) {
-  const url = URL + "/assign_user";
   try {
-    const response = await axios.post(url, {
+    const response = await axios.post(ASSIGN_USER_TO_ISSUE_TYPE_URL, {
       issue_type,
       user_id,
     });

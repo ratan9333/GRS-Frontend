@@ -1,10 +1,10 @@
 import axios from "axios";
 import { URL } from "./getIssues";
+import { GET_ONE_SIIUE_URL } from "./helpers";
 
 export async function getOneIssuesData(id: string) {
-  const url = URL + "/issues/" + id;
   try {
-    const response = await axios.get(url, {});
+    const response = await axios.get(`${GET_ONE_SIIUE_URL}/${id}`, {});
     return response.data.response;
   } catch (error) {
     console.log({ error });

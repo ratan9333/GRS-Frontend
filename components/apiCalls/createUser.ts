@@ -1,5 +1,6 @@
 import axios from "axios";
 import { URL } from "./getIssues";
+import { CREATE_USER_URL } from "./helpers";
 
 type userDataType = {
   name: string;
@@ -10,9 +11,10 @@ type userDataType = {
 };
 
 export async function createUser(data: userDataType) {
-  const url = URL + "/create_user";
   try {
-    const response = await axios.post(url, data);
+    console.log({ CREATE_USER_URL });
+    const response = await axios.post(CREATE_USER_URL, data);
+    console.log({ response });
     return response.data.response;
   } catch (error) {
     console.log({ error });

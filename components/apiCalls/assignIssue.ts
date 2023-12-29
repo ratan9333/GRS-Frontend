@@ -1,10 +1,9 @@
 import axios from "axios";
-import { URL } from "./getIssues";
+import { ASSIGN_ISSUE_URL, UPDATE_STATUS_URL } from "./helpers";
 
 export async function assignIssue(issue_id: string, user_id: string) {
-  const url = URL + "/assignIssue";
   try {
-    const response = await axios.post(url, {
+    const response = await axios.post(ASSIGN_ISSUE_URL, {
       issue_id,
       user_id,
     });
@@ -17,10 +16,8 @@ export async function assignIssue(issue_id: string, user_id: string) {
 }
 
 export async function updateStatus(issue_id: string, status: string) {
-  const url = URL + "/updateStatus";
-  console.log("updateStatus: ", { issue_id, status });
   try {
-    const response = await axios.post(url, {
+    const response = await axios.post(UPDATE_STATUS_URL, {
       issue_id,
       status,
     });

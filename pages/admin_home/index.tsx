@@ -1,13 +1,12 @@
-import { Button, Card, Divider, Group, Select, Stack, Table, Text, Title, Image, Tabs, Center, TextInput, Space, Grid, Alert, PasswordInput } from "@mantine/core";
-import { IssueStatus } from "@prisma/client";
+import { Alert, Button, Card, Center, Divider, Grid, Group, PasswordInput, Select, Space, Stack, Tabs, Text, TextInput, Title } from "@mantine/core";
+import { IconArrowBack, IconPasswordFingerprint, IconUserPlus, IconUsersGroup } from "@tabler/icons-react";
+import Link from "next/link";
 import router from "next/router";
 import { useEffect, useState } from "react";
-import { GradientBatch } from "../../components/Badge";
-import { IconPhoto, IconMessageCircle, IconSettings, IconUser, IconUserPlus, IconUsersGroup, IconInfoCircle, IconArrowBack } from "@tabler/icons-react";
-import { getUsers } from "../../components/apiCalls/getUsers";
 import { assignUserToIssueType } from "../../components/apiCalls/assignUserToIssueType";
 import { createUser } from "../../components/apiCalls/createUser";
-import Link from "next/link";
+import { getUsers } from "../../components/apiCalls/getUsers";
+import { resetPassword } from "../../components/apiCalls/resetPassword";
 
 function toTitleCase(str: string) {
   return str.replace(/\w\S*/g, function (txt) {
@@ -25,11 +24,19 @@ export default function AdminHome() {
     phone_number: "",
     role: "",
   });
+  const [resetPasswordFormData, setResetPasswordFormData] = useState({
+    user_id: "",
+    password: "",
+    confirm_password: "",
+  });
+
   const [users, setUsers] = useState([]);
   const [issueType, setIssueType] = useState("");
   const [selectedUser, setSelectedUser] = useState("");
   const [message, setMessage] = useState({ color: "red", message: "" });
   const [createUserMessage, setcreateUserMessage] = useState({ color: "red", message: "" });
+  const [resetPasswordMessage, setResetPasswordMessage] = useState({ color: "red", message: "" });
+  const [createIssue, setCreateIssue] = useState("");
 
   async function fetchUsers() {
     const res = await getUsers();
@@ -54,9 +61,19 @@ export default function AdminHome() {
       setMessage({ color: "green", message: "User assigned to issue type" });
     }
   }
+  async function handleResetPassword() {
+    if (resetPasswordFormData.password !== resetPasswordFormData.confirm_password) {
+      setResetPasswordMessage({ color: "red", message: "Passwords do not match" });
+      return;
+    }
+    const res = await resetPassword(resetPasswordFormData.user_id, resetPasswordFormData.password);
+    if (res.error) setResetPasswordMessage({ color: "red", message: res.error });
+    else {
+      setResetPasswordMessage({ color: "green", message: "Password reset successful" });
+    }
+  }
 
   async function createUserCheck() {
-    console.log({ formData });
     for (const key in formData) {
       if (!formData[key]) {
         setcreateUserMessage({ color: "red", message: `Please enter ${key}` });
@@ -67,8 +84,14 @@ export default function AdminHome() {
       setcreateUserMessage({ color: "red", message: "Passwords do not match" });
       return;
     }
-    await createUser(formData);
-    setcreateUserMessage({ color: "green", message: "User created" });
+    const user = await createUser(formData);
+    if (user.error) setcreateUserMessage({ color: "red", message: user.error });
+    else {
+      setcreateUserMessage({ color: "green", message: "User created. Reloading in 5s..." });
+      setTimeout(() => {
+        router.reload();
+      }, 5000);
+    }
   }
 
   function handleChange(key: string, e: any) {
@@ -92,7 +115,7 @@ export default function AdminHome() {
       <Divider />
       {userLoggedIn?.role === "ADMIN" && (
         <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-          <Card shadow="sm" radius="md" withBorder w={200} style={{ minWidth: "400px", minHeight: "600px" }}>
+          <Card shadow="sm" radius="md" withBorder w={200} style={{ minWidth: "800px", minHeight: "600px" }}>
             <Tabs defaultValue="assignRole">
               <Tabs.List>
                 <Tabs.Tab value="assignRole" leftSection={<IconUsersGroup />}>
@@ -101,9 +124,9 @@ export default function AdminHome() {
                 <Tabs.Tab value="CreateUser" leftSection={<IconUserPlus />}>
                   Create User
                 </Tabs.Tab>
-                {/* <Tabs.Tab value="CreateIssue" leftSection={<IconUserPlus />}>
-                  Create Issue
-                </Tabs.Tab> */}
+                <Tabs.Tab value="resetPassword" leftSection={<IconPasswordFingerprint />}>
+                  Reset Password
+                </Tabs.Tab>
               </Tabs.List>
 
               <Tabs.Panel value="assignRole">
@@ -111,17 +134,25 @@ export default function AdminHome() {
                   <Stack>
                     <Space h={20} />
                     <Title order={2}>Assign User to Issue Type</Title>
-                    <Select label="User" placeholder="Select User" data={users.map((x) => x.id + ": " + x.name)} onChange={setSelectedUser} />
-                    <Select label="Issue Type" placeholder="Select Issue Type" data={IssueType.map((x) => toTitleCase(x))} onChange={setIssueType} />
-                    <Button
-                      variant="filled"
-                      color="blue"
-                      onClick={() => {
-                        assignUserToIssue();
-                      }}
-                    >
-                      Assign
-                    </Button>
+                    <Select required label="Action" placeholder="Select Action" data={["Assign Issue", "Create Issue"]} onChange={(e) => setCreateIssue(e)} />
+                    {createIssue === "Assign Issue" && (
+                      <Select required label="Issue Type" placeholder="Select Issue Type" data={IssueType.map((x) => toTitleCase(x))} onChange={setIssueType} />
+                    )}
+                    {createIssue === "Create Issue" && <TextInput required label="Issue Type" placeholder="Enter Issue Type" onChange={(e) => setIssueType(e.target.value)} />}
+                    {createIssue && (
+                      <>
+                        <Select label="Role" placeholder="Select Role" data={users.map((x) => x.id + ": " + x.name)} onChange={setSelectedUser} />
+                        <Button
+                          variant="filled"
+                          color="blue"
+                          onClick={() => {
+                            assignUserToIssue();
+                          }}
+                        >
+                          Assign
+                        </Button>
+                      </>
+                    )}
                     {message.message && (
                       <div>
                         <Space h={20} />
@@ -133,11 +164,18 @@ export default function AdminHome() {
                   </Stack>
                 </Center>
               </Tabs.Panel>
-
               <Tabs.Panel value="CreateUser">
                 {/* <Center>  */}
                 <Stack>
-                  <Space h={20} />
+                  {createUserMessage.message && (
+                    <div>
+                      <Space h={20} />
+                      <Alert variant="light" color={createUserMessage.color} radius="xs" withCloseButton>
+                        {toTitleCase(createUserMessage.message)}
+                      </Alert>
+                    </div>
+                  )}
+                  {!createUserMessage.message && <Space h={20} />}
                   <Title order={2}>Create User</Title>
                   <TextInput
                     label="Name"
@@ -145,6 +183,7 @@ export default function AdminHome() {
                     onChange={(e) => {
                       handleChange("name", e);
                     }}
+                    required
                   />
                   <TextInput
                     label="Email"
@@ -152,6 +191,7 @@ export default function AdminHome() {
                     onChange={(e) => {
                       handleChange("email", e);
                     }}
+                    required
                   />
                   <TextInput
                     label="Phone Number"
@@ -159,28 +199,30 @@ export default function AdminHome() {
                     onChange={(e) => {
                       handleChange("phone_number", e);
                     }}
+                    required
                   />
                   <Grid>
-                    {/* <TextInput */}
-                    <PasswordInput
-                      label="Password"
-                      placeholder="Enter Password"
-                      w={175}
-                      onChange={(e) => {
-                        handleChange("password", e);
-                      }}
-                    />
-                    {/* <TextInput */}
-                    <PasswordInput
-                      label="Confirm Password"
-                      placeholder="Confirm Password"
-                      w={175}
-                      onChange={(e) => {
-                        handleChange("confirm_password", e);
-                      }}
-                    />
+                    <Grid.Col span={6}>
+                      <PasswordInput
+                        label="Password"
+                        placeholder="Enter Password"
+                        onChange={(e) => {
+                          handleChange("password", e);
+                        }}
+                        required
+                      />
+                    </Grid.Col>
+                    <Grid.Col span={6}>
+                      <PasswordInput
+                        label="Confirm Password"
+                        placeholder="Confirm Password"
+                        onChange={(e) => {
+                          handleChange("confirm_password", e);
+                        }}
+                        required
+                      />
+                    </Grid.Col>
                   </Grid>
-
                   <Select
                     label="Role"
                     placeholder="Select User"
@@ -188,6 +230,7 @@ export default function AdminHome() {
                     onChange={(e) => {
                       handleChange("role", e);
                     }}
+                    required
                   />
                   <Button
                     variant="light"
@@ -198,16 +241,49 @@ export default function AdminHome() {
                   >
                     Create User
                   </Button>
-                  {createUserMessage.message && (
-                    <div>
-                      <Space h={20} />
-                      <Alert variant="light" color={createUserMessage.color} radius="xs" withCloseButton>
-                        {toTitleCase(createUserMessage.message)}
-                      </Alert>
-                    </div>
-                  )}
                 </Stack>
                 {/* </Center> */}
+              </Tabs.Panel>
+              <Tabs.Panel value="resetPassword">
+                <Center>
+                  <Stack>
+                    {resetPasswordMessage.message && (
+                      <div>
+                        <Space h={20} />
+                        <Alert variant="light" color={resetPasswordMessage.color} radius="xs" withCloseButton>
+                          {toTitleCase(resetPasswordMessage.message)}
+                        </Alert>
+                      </div>
+                    )}
+                    {!resetPasswordMessage.message && <Space h={20} />}
+                    <Title order={2}>Reset Password</Title>
+                    <Select
+                      label="User"
+                      placeholder="Select User"
+                      data={users.map((x) => x.id + ": " + x.name)}
+                      onChange={(e) => {
+                        resetPasswordFormData.user_id = e?.split(":")?.[0];
+                      }}
+                    />
+                    <PasswordInput label="Password" placeholder="Enter Password" onChange={(e) => (resetPasswordFormData.password = e.target.value)} />
+                    <PasswordInput
+                      label="Confirm Password"
+                      placeholder="Confirm Password"
+                      onChange={(e) => {
+                        resetPasswordFormData.confirm_password = e.target.value;
+                      }}
+                    />
+                    <Button
+                      variant="filled"
+                      color="blue"
+                      onClick={() => {
+                        handleResetPassword();
+                      }}
+                    >
+                      Reset Password
+                    </Button>
+                  </Stack>
+                </Center>
               </Tabs.Panel>
             </Tabs>
           </Card>

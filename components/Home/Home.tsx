@@ -63,7 +63,7 @@ export const Home = () => {
 
             <Group style={{ marginBottom: "10px" }}>
               <LogOut />
-              <AdminDashboardButton />
+              {(adminUser as any)?.role === "ADMIN" && <AdminDashboardButton />}
             </Group>
           </Grid.Col>
 
