@@ -6,7 +6,7 @@ export function LogOut() {
     window.location.reload();
   }
   return (
-    <Button variant="light" color="red" size="sm" onClick={logout}>
+    <Button variant="light" color="red" size="compact-sm" onClick={logout}>
       Log Out
     </Button>
   );

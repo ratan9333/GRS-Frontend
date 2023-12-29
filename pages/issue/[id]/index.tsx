@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import router from "next/router";
 import { useEffect, useState } from "react";
-import { GradientBatch, Statusbatch } from "../../../components/Badge";
+import { Statusbatch } from "../../../components/Badge";
 import { assignIssue, updateStatus } from "../../../components/apiCalls/assignIssue";
 import { getOneIssuesData } from "../../../components/apiCalls/fetchOneIssue";
 import { useDisclosure } from "@mantine/hooks";
@@ -70,6 +70,7 @@ export default function Issue() {
         </Grid.Col>
       </Grid>
       <Divider />
+
       {isLoading && (
         <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "60vh" }}>
           <Loader size="xl" />
@@ -77,8 +78,8 @@ export default function Issue() {
       )}
 
       {!isLoading && (
-        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "90vh" }}>
-          <Card shadow="sm" radius="md" withBorder w={700}>
+        <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+          <Card shadow="sm" radius="md" withBorder w={700} style={{ height: "70%", overflow: "hidden" }}>
             <Group grow>
               <Title style={{ fontSize: "30px" }}>Issue Id: {(data as any).id}</Title>
               <div> </div>
@@ -101,13 +102,16 @@ export default function Issue() {
                   </>
                 )}
               </Modal>
-              <div onClick={open} style={{ cursor: "pointer" }}>
+              <Center onClick={open} style={{ cursor: "pointer" }}>
                 <Image
+                  style={{
+                    height: "200px",
+                  }}
                   src={(data as any).imageUrl ?? "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Image_not_available.png/800px-Image_not_available.png?20210219185637"}
                   height={400}
                   alt="Norway"
                 />
-              </div>
+              </Center>
             </Card.Section>
             <Stack>
               <div>
@@ -132,6 +136,10 @@ export default function Issue() {
                     <Table.Tr>
                       <Table.Th>Assigned to:</Table.Th>
                       <Table.Th>{(data as any).userName ?? "-"}</Table.Th>
+                    </Table.Tr>
+                    <Table.Tr>
+                      <Table.Th>Issue raised on:</Table.Th>
+                      <Table.Th>{(data as any).request_time ? toDateTimeISO((data as any).request_time) : "-"}</Table.Th>
                     </Table.Tr>
                   </Table.Thead>
                 </Table>
@@ -159,4 +167,15 @@ export default function Issue() {
       )}
     </>
   );
+}
+
+function toDateTimeISO(time: string) {
+  const date = new Date(time);
+  const day = date.getDate();
+  const month = date.toLocaleString("default", { month: "long" });
+  const year = date.getFullYear();
+  const hours = date.getHours();
+  const minutes = date.getMinutes();
+  const seconds = date.getSeconds();
+  return `${day} ${month} ${year}, ${hours}:${minutes}:${seconds}`;
 }

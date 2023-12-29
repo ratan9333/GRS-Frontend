@@ -6,7 +6,7 @@ export function AdminDashboardButton() {
     router.push("/admin_home");
   }
   return (
-    <Button variant="light" color="blue" size="sm" onClick={pushToAdminDashboard}>
+    <Button variant="light" size="compact-sm" color="blue" onClick={pushToAdminDashboard}>
       Admin Dashboard
     </Button>
   );

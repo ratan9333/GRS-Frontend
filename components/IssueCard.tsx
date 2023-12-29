@@ -12,22 +12,17 @@ type IssueCardProps = {
 export function IssueCard({ issueType, status, assigned, id, imageUrl }: IssueCardProps) {
   const image_url = imageUrl ?? "https://images.pexels.com/photos/281260/pexels-photo-281260.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2";
   return (
-    <Card shadow="sm" radius="md" withBorder>
+    <Card shadow="sm" radius="md" withBorder style={{ minHeight: "190px" }}>
+      <Card.Section>
+        <Image src={image_url} height={160} alt="Norway" />
+      </Card.Section>
       <Stack>
-        <Card.Section>
-          <Image src={image_url} height={160} alt="Norway" />
-        </Card.Section>
         <Grid justify="space-between">
-          <GradientBatch assigned={assigned} />
           <Statusbatch status={status} />
-
-          {/* <Badge color="blue" size="sm">
-            {status}
-          </Badge> */}
         </Grid>
         <div style={{ textAlign: "left" }}>
-          <Text fw={700}>{`Issue Type: ${issueType}`}</Text>
-          <Text fw={700}>{`Issue Id: ${id}`}</Text>
+          <Text fw={700} size="14px">{`Issue Type: ${issueType}`}</Text>
+          <Text fw={700} size="14px">{`Issue Id: ${id}`}</Text>
         </div>
       </Stack>
     </Card>

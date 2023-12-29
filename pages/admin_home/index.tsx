@@ -91,8 +91,8 @@ export default function AdminHome() {
       </Grid>
       <Divider />
       {userLoggedIn?.role === "ADMIN" && (
-        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "90vh" }}>
-          <Card shadow="sm" radius="md" withBorder w={700} style={{ minWidth: "500px", minHeight: "740px" }}>
+        <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+          <Card shadow="sm" radius="md" withBorder w={200} style={{ minWidth: "500px", minHeight: "600px" }}>
             <Tabs defaultValue="assignRole">
               <Tabs.List>
                 <Tabs.Tab value="assignRole" leftSection={<IconUsersGroup />}>
@@ -101,6 +101,9 @@ export default function AdminHome() {
                 <Tabs.Tab value="CreateUser" leftSection={<IconUserPlus />}>
                   Create User
                 </Tabs.Tab>
+                {/* <Tabs.Tab value="CreateIssue" leftSection={<IconUserPlus />}>
+                  Create Issue
+                </Tabs.Tab> */}
               </Tabs.List>
 
               <Tabs.Panel value="assignRole">

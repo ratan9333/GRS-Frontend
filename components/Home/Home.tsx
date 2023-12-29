@@ -1,4 +1,4 @@
-import { Card, Divider, Grid, Group, Loader, Pagination, Select, Title } from "@mantine/core";
+import { Button, Card, Divider, Grid, Group, Loader, Pagination, Select, Switch, Table, Title } from "@mantine/core";
 import { IssueStatus } from "@prisma/client";
 import Link from "next/link";
 import router from "next/router";
@@ -15,6 +15,7 @@ export const Home = () => {
   const [page, setPage] = useState(1);
   const [adminUser, setAdminUser] = useState({});
   const [isLoading, setIsLoading] = useState(true);
+  const [displayTable, setDisplayTable] = useState(true);
 
   async function fetchData(userId) {
     const res = await getIssues(status, page, userId);
@@ -52,34 +53,33 @@ export const Home = () => {
         <Grid>
           <Grid.Col span={6}>
             <Group style={{ marginBottom: "10px" }}>
-              <Title order={1} fw={400}>
+              <Title order={1} fw={400} size={"20px"}>
                 Logged in as:{" "}
               </Title>
-              <Title order={1} style={{ color: "rgb(75,155,235)" }}>
+              <Title size={"20px"} order={1} style={{ color: "rgb(75,155,235)" }}>
                 {(adminUser as any)?.name ?? "No Name"}
               </Title>
             </Group>
 
-            {/* <Title order={2}>Logged in as: {(adminUser as any)?.name ?? "No Name"}</Title> */}
             <Group style={{ marginBottom: "10px" }}>
               <LogOut />
               <AdminDashboardButton />
             </Group>
           </Grid.Col>
+
           <Grid.Col span={6}>
             <Select
               label="Filter"
-              style={{ maxWidth: "300px", float: "right" }}
+              style={{ maxWidth: "300px", color: "red", float: "right" }}
               maxDropdownHeight={300}
               placeholder={status}
               data={[...["All"], ...Object.values(IssueStatus)]}
               onChange={setStatus}
             />
           </Grid.Col>
-          {/* <Grid.Col span={1}>
-          </Grid.Col> */}
         </Grid>
         <Divider style={{ margin: "5px" }} />
+
         {data.length === 0 && (
           <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "60vh" }}>
             {isLoading && <Loader size="xl" />}
@@ -90,10 +90,15 @@ export const Home = () => {
             )}
           </div>
         )}
-        <Grid gutter={"xs"}>
+        {!isLoading && (
+          <Switch defaultChecked style={{ float: "right" }} labelPosition="left" label="View Table" size="sm" onChange={(event) => setDisplayTable(event.currentTarget.checked)} />
+        )}
+        <Grid gutter="xs">
+          {data.length > 0 && displayTable && <TableComponent data={data} />}
           {data.length > 0 &&
+            !displayTable &&
             data.map((item, index) => (
-              <Grid.Col span={{ lg: 3, md: 4, sm: 4, xl: 3, xs: 6 }} key={index}>
+              <Grid.Col span={{ lg: 3, md: 3, sm: 4, xl: 3, xs: 6 }} key={index}>
                 <Link key={index} href={`/issue/${item.id}`} style={{ textDecoration: "none" }}>
                   <IssueCard key={index} status={item.status} issueType={item.issueType} assigned={item.assigned} imageUrl={item.imageUrl} id={item.id} />
                 </Link>
@@ -104,7 +109,9 @@ export const Home = () => {
       <div style={{ position: "fixed", bottom: 0, left: 0, width: "100%", padding: "10px", textAlign: "center", zIndex: 100, backgroundColor: "white" }}>
         <Divider />
         <Grid grow>
-          <Grid.Col span={9} style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+          {/* <Grid.Col span={1} offset={11}> */}
+          {/* </Grid.Col> */}
+          <Grid.Col span={12} style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
             <Pagination total={pagesCount % 8 === 0 ? pagesCount / 8 : pagesCount / 8 + 1} siblings={1} defaultValue={1} onChange={setNewPage} />
           </Grid.Col>
         </Grid>
@@ -112,3 +119,50 @@ export const Home = () => {
     </>
   );
 };
+
+function TableComponent({ data }: { data: Record<string, any>[] }) {
+  const elements = data.map((element) => ({
+    issue_id: element.id,
+    issue_type: element.issueType,
+    status: element.status,
+  }));
+
+  //[{ issue_type: 6, issue_id: 12.011, status: "C" }];
+
+  const rows = elements.map((element) => (
+    <Table.Tr key={element.issue_id}>
+      <Table.Td></Table.Td>
+      <Table.Td>{element.issue_id}</Table.Td>
+      <Table.Td>{element.issue_type}</Table.Td>
+      <Table.Td>{element.status}</Table.Td>
+      <Table.Td>
+        <Button
+          size="xs"
+          variant="outline"
+          color="blue"
+          onClick={() => {
+            router.push(`/issue/${element.issue_id}`);
+          }}
+        >
+          View Issue
+        </Button>
+      </Table.Td>
+      {/* <Table.Td>{element.mass}</Table.Td> */}
+    </Table.Tr>
+  ));
+
+  return (
+    <Table>
+      <Table.Thead>
+        <Table.Tr>
+          <Table.Th></Table.Th>
+          <Table.Th>Issue Id</Table.Th>
+          <Table.Th>Issue Type</Table.Th>
+          <Table.Th>Status</Table.Th>
+          <Table.Th></Table.Th>
+        </Table.Tr>
+      </Table.Thead>
+      <Table.Tbody>{rows}</Table.Tbody>
+    </Table>
+  );
+}
