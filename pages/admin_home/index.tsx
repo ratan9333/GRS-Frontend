@@ -1,4 +1,4 @@
-import { Button, Card, Divider, Group, Select, Stack, Table, Text, Title, Image, Tabs, Center, TextInput, Space, Grid, Alert } from "@mantine/core";
+import { Button, Card, Divider, Group, Select, Stack, Table, Text, Title, Image, Tabs, Center, TextInput, Space, Grid, Alert, PasswordInput } from "@mantine/core";
 import { IssueStatus } from "@prisma/client";
 import router from "next/router";
 import { useEffect, useState } from "react";
@@ -92,7 +92,7 @@ export default function AdminHome() {
       <Divider />
       {userLoggedIn?.role === "ADMIN" && (
         <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-          <Card shadow="sm" radius="md" withBorder w={200} style={{ minWidth: "500px", minHeight: "600px" }}>
+          <Card shadow="sm" radius="md" withBorder w={200} style={{ minWidth: "400px", minHeight: "600px" }}>
             <Tabs defaultValue="assignRole">
               <Tabs.List>
                 <Tabs.Tab value="assignRole" leftSection={<IconUsersGroup />}>
@@ -135,75 +135,79 @@ export default function AdminHome() {
               </Tabs.Panel>
 
               <Tabs.Panel value="CreateUser">
-                <Center>
-                  <Stack>
-                    <Space h={20} />
-                    <Title order={2}>Create User</Title>
-                    <TextInput
-                      label="Name"
-                      placeholder="Enter Name"
+                {/* <Center>  */}
+                <Stack>
+                  <Space h={20} />
+                  <Title order={2}>Create User</Title>
+                  <TextInput
+                    label="Name"
+                    placeholder="Enter Name"
+                    onChange={(e) => {
+                      handleChange("name", e);
+                    }}
+                  />
+                  <TextInput
+                    label="Email"
+                    placeholder="Enter Email"
+                    onChange={(e) => {
+                      handleChange("email", e);
+                    }}
+                  />
+                  <TextInput
+                    label="Phone Number"
+                    placeholder="Enter Phone Number"
+                    onChange={(e) => {
+                      handleChange("phone_number", e);
+                    }}
+                  />
+                  <Grid>
+                    {/* <TextInput */}
+                    <PasswordInput
+                      label="Password"
+                      placeholder="Enter Password"
+                      w={175}
                       onChange={(e) => {
-                        handleChange("name", e);
+                        handleChange("password", e);
                       }}
                     />
-                    <TextInput
-                      label="Email"
-                      placeholder="Enter Email"
+                    {/* <TextInput */}
+                    <PasswordInput
+                      label="Confirm Password"
+                      placeholder="Confirm Password"
+                      w={175}
                       onChange={(e) => {
-                        handleChange("email", e);
+                        handleChange("confirm_password", e);
                       }}
                     />
-                    <TextInput
-                      label="Phone Number"
-                      placeholder="Enter Phone Number"
-                      onChange={(e) => {
-                        handleChange("phone_number", e);
-                      }}
-                    />
-                    <Grid>
-                      <TextInput
-                        label="Password"
-                        placeholder="Enter Password"
-                        onChange={(e) => {
-                          handleChange("password", e);
-                        }}
-                      />
-                      <TextInput
-                        label="Confirm Password"
-                        placeholder="Confirm Password"
-                        onChange={(e) => {
-                          handleChange("confirm_password", e);
-                        }}
-                      />
-                    </Grid>
+                  </Grid>
 
-                    <Select
-                      label="Role"
-                      placeholder="Select User"
-                      data={["ADMIN", "USER"]}
-                      onChange={(e) => {
-                        handleChange("role", e);
-                      }}
-                    />
-                    <Button
-                      variant="light"
-                      color="blue"
-                      onClick={() => {
-                        createUserCheck();
-                      }}
-                    >
-                      Create User
-                    </Button>
-                    {createUserMessage.message && (
-                      <div>
-                        <Space h={20} />
-                        <Alert variant="light" color={createUserMessage.color} radius="xs" withCloseButton>
-                          {toTitleCase(createUserMessage.message)}
-                        </Alert>
-                      </div>
-                    )}
-                  </Stack>
-                </Center>
+                  <Select
+                    label="Role"
+                    placeholder="Select User"
+                    data={["ADMIN", "USER"]}
+                    onChange={(e) => {
+                      handleChange("role", e);
+                    }}
+                  />
+                  <Button
+                    variant="light"
+                    color="blue"
+                    onClick={() => {
+                      createUserCheck();
+                    }}
+                  >
+                    Create User
+                  </Button>
+                  {createUserMessage.message && (
+                    <div>
+                      <Space h={20} />
+                      <Alert variant="light" color={createUserMessage.color} radius="xs" withCloseButton>
+                        {toTitleCase(createUserMessage.message)}
+                      </Alert>
+                    </div>
+                  )}
+                </Stack>
+                {/* </Center> */}
               </Tabs.Panel>
             </Tabs>
           </Card>
