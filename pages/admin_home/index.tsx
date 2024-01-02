@@ -7,6 +7,7 @@ import { assignUserToIssueType } from "../../components/apiCalls/assignUserToIss
 import { createUser } from "../../components/apiCalls/createUser";
 import { getUsers } from "../../components/apiCalls/getUsers";
 import { resetPassword } from "../../components/apiCalls/resetPassword";
+import { getAllIssues } from "../../components/apiCalls/getAlIssues";
 
 function toTitleCase(str: string) {
   return str.replace(/\w\S*/g, function (txt) {
@@ -37,10 +38,12 @@ export default function AdminHome() {
   const [createUserMessage, setcreateUserMessage] = useState({ color: "red", message: "" });
   const [resetPasswordMessage, setResetPasswordMessage] = useState({ color: "red", message: "" });
   const [createIssue, setCreateIssue] = useState("");
+  const [issues, setIssues] = useState([] as any);
 
   async function fetchUsers() {
     const res = await getUsers();
-    console.log({ res });
+    const allIssues = await getAllIssues();
+    setIssues(allIssues);
     setUsers(res);
   }
 
@@ -53,12 +56,16 @@ export default function AdminHome() {
 
   async function assignUserToIssue() {
     setMessage({ color: "red", message: "" });
-    const user_id = selectedUser.split(":")[0];
-    console.log({ user_id, issueType });
-    if (!user_id || !issueType) setMessage({ color: "red", message: "Please select user and issue type" });
-    else {
-      await assignUserToIssueType(issueType, user_id);
-      setMessage({ color: "green", message: "User assigned to issue type" });
+    if (!selectedUser || !issueType) {
+      setMessage({ color: "red", message: "Please select user and issue type" });
+    } else {
+      const user_id = selectedUser.split(":")[0];
+      console.log({ user_id, issueType });
+      if (!user_id || !issueType) setMessage({ color: "red", message: "Please select user and issue type" });
+      else {
+        await assignUserToIssueType(issueType, user_id);
+        setMessage({ color: "green", message: "User assigned to issue type" });
+      }
     }
   }
   async function handleResetPassword() {
@@ -99,8 +106,6 @@ export default function AdminHome() {
     else setFormData({ ...formData, [key]: e.target.value });
   }
 
-  const IssueType = ["ILLEGAL_CONSTRUCTION", "ILLEGAL_TRANSAPORTATION", "GARBAGE_IN_PUBLIC_PLACE", "ILLEGAL_PARKING_OF_VEHICLE", "TRAFFIC", "DAMAGED_PUBLIC_INFRASRUCTURE"];
-
   return (
     <>
       <Grid grow>
@@ -136,12 +141,12 @@ export default function AdminHome() {
                     <Title order={2}>Assign User to Issue Type</Title>
                     <Select required label="Action" placeholder="Select Action" data={["Assign Issue", "Create Issue"]} onChange={(e) => setCreateIssue(e)} />
                     {createIssue === "Assign Issue" && (
-                      <Select required label="Issue Type" placeholder="Select Issue Type" data={IssueType.map((x) => toTitleCase(x))} onChange={setIssueType} />
+                      <Select required label="Issue Type" placeholder="Select Issue Type" data={issues.map((x) => toTitleCase(x))} onChange={setIssueType} />
                     )}
                     {createIssue === "Create Issue" && <TextInput required label="Issue Type" placeholder="Enter Issue Type" onChange={(e) => setIssueType(e.target.value)} />}
                     {createIssue && (
                       <>
-                        <Select label="Role" placeholder="Select Role" data={users.map((x) => x.id + ": " + x.name)} onChange={setSelectedUser} />
+                        <Select label="User" placeholder="Select User" data={users.map((x) => x.id + ": " + x.name)} onChange={setSelectedUser} />
                         <Button
                           variant="filled"
                           color="blue"

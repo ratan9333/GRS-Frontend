@@ -8,3 +8,4 @@ export const GET_ALL_ISSUES = WBGRS_URL + "/issues";
 export const GET_ALL_USERS = WBGRS_URL + "/users";
 export const LOGIN_URL = WBGRS_URL + "/login";
 export const RESET_PASSWORD_URL = WBGRS_URL + "/reset_password";
+export const GET_ALL_ISSUES_URL = WBGRS_URL + "/all_issues";
