@@ -152,9 +152,16 @@ export default function AdminHome() {
                       />
                     )}
                     {createIssue === "Create Issue" && <TextInput required label="Issue Type" placeholder="Enter Issue Type" onChange={(e) => setIssueType(e.target.value)} />}
+                    {users.length === 0 && <Text style={{ color: "red" }}>No users found. Please create a user first</Text>}
                     {createIssue && (
                       <>
-                        <Select label="User" placeholder="Select User" data={users.map((x) => x.id + ": " + x.name)} onChange={setSelectedUser} />
+                        <Select
+                          label="User"
+                          placeholder="Select User"
+                          disabled={users.length === 0 ? true : false}
+                          data={users.map((x) => x.id + ": " + x.name)}
+                          onChange={setSelectedUser}
+                        />
                         <Button
                           variant="filled"
                           color="blue"
