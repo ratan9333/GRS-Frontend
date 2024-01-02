@@ -140,8 +140,16 @@ export default function AdminHome() {
                     <Space h={20} />
                     <Title order={2}>Assign User to Issue Type</Title>
                     <Select required label="Action" placeholder="Select Action" data={["Assign Issue", "Create Issue"]} onChange={(e) => setCreateIssue(e)} />
-                    {createIssue === "Assign Issue" && (
-                      <Select required label="Issue Type" placeholder="Select Issue Type" data={issues.map((x) => toTitleCase(x))} onChange={setIssueType} />
+                    {createIssue === "Assign Issue" && issues.length === 0 && <Text style={{ color: "red" }}>No issues found. Please create an issue first</Text>}
+                    {createIssue === "Assign Issue" && issues.lenght !== 0 && (
+                      <Select
+                        required
+                        label="Issue Type"
+                        disabled={issues.length === 0 ? true : false}
+                        placeholder="Select Issue Type"
+                        data={issues.map((x) => toTitleCase(x))}
+                        onChange={setIssueType}
+                      />
                     )}
                     {createIssue === "Create Issue" && <TextInput required label="Issue Type" placeholder="Enter Issue Type" onChange={(e) => setIssueType(e.target.value)} />}
                     {createIssue && (
