@@ -1,5 +1,4 @@
 import axios from "axios";
-import { URL } from "./getIssues";
 import { GET_ONE_SIIUE_URL } from "./helpers";
 
 export async function getOneIssuesData(id: string) {
