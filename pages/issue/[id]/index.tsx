@@ -1,5 +1,5 @@
 // "use client";
-import { Button, Card, Center, Divider, Grid, Group, Image, Loader, Modal, Select, Stack, Table, Text, Title } from "@mantine/core";
+import { Alert, Button, Card, Center, Divider, Grid, Group, Image, Loader, Modal, Select, Stack, Table, Text, Title } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IssueStatus } from "@prisma/client";
 import { IconArrowBack } from "@tabler/icons-react";
@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import { Statusbatch } from "../../../components/Badge";
 import { assignIssue, updateStatus } from "../../../components/apiCalls/assignIssue";
 import { getOneIssuesData } from "../../../components/apiCalls/fetchOneIssue";
+import { deleteIssue } from "../../../components/apiCalls/deleteIssue";
 
 export default function Issue() {
   const params = useParams();
@@ -21,13 +22,23 @@ export default function Issue() {
   const [loggedUser, setLoggedUser] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [opened, { open, close }] = useDisclosure(false);
+  const [issueDeleted, setIssueDeleted] = useState("");
 
   async function fetchData() {
     const res = await getOneIssuesData(issue_id);
-    console.log({ res });
     setData(res.data ?? []);
     setUsers(res.users ?? []);
     setIsLoading(false);
+  }
+
+  async function deleteIssueAction() {
+    const del = await deleteIssue(issue_id);
+    if (del === "success") {
+      setIssueDeleted("true");
+      setTimeout(() => {
+        router.push("/");
+      }, 5000);
+    } else setIssueDeleted("false");
   }
 
   async function assignUser() {
@@ -161,6 +172,14 @@ export default function Issue() {
                   <Button onClick={() => updateIssueStatus()}>Update Status</Button>
                 </Card>
               </Group>
+              <Button color="red" onClick={() => deleteIssueAction()}>
+                Delete Issue
+              </Button>
+              {issueDeleted === "true" && (
+                <Alert variant="light" color="green" radius="xs">
+                  Issue Deleted Successfully. Redirecting to Home Page in 5s...
+                </Alert>
+              )}
             </Stack>
           </Card>
         </div>

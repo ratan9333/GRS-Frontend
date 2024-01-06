@@ -6,6 +6,7 @@ export const CREATE_USER_URL = WBGRS_URL + "/create_user";
 export const EDIT_USER_URL = WBGRS_URL + "/edit_user";
 export const DELETE_USER_URL = WBGRS_URL + "/delete_user";
 export const GET_ONE_SIIUE_URL = WBGRS_URL + "/issues";
+export const DELETE_ISSUE_URL = WBGRS_URL + "/delete_issue";
 export const GET_ALL_ISSUES = WBGRS_URL + "/issues";
 export const GET_ALL_USERS = WBGRS_URL + "/users";
 export const LOGIN_URL = WBGRS_URL + "/login";
