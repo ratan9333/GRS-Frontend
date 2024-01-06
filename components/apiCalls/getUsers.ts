@@ -1,5 +1,4 @@
 import axios from "axios";
-import { URL } from "./getIssues";
 import { GET_ALL_USERS } from "./helpers";
 
 export async function getUsers() {

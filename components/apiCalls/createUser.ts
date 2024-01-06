@@ -1,5 +1,4 @@
 import axios from "axios";
-import { URL } from "./getIssues";
 import { CREATE_USER_URL } from "./helpers";
 
 type userDataType = {

@@ -9,7 +9,7 @@ import { getIssues } from "../apiCalls/getIssues";
 import { LogOut } from "../logout";
 
 export const Home = () => {
-  const [data, setData] = useState([]);
+  const [allIssueData, setAllIssueData] = useState([]);
   const [status, setStatus] = useState("All");
   const [pagesCount, setPagesCount] = useState(1);
   const [page, setPage] = useState(1);
@@ -19,14 +19,14 @@ export const Home = () => {
 
   async function fetchData(userId) {
     const res = await getIssues(status, page, userId);
-    setData(res.data ?? []);
+    setAllIssueData(res.data ?? []);
     setPagesCount(res.count ?? 1);
     setIsLoading(false);
   }
 
   async function setNewPage(page) {
     console.log("setting page");
-    setData([]);
+    setAllIssueData([]);
     setIsLoading(true);
     setPage(page);
   }
@@ -41,7 +41,7 @@ export const Home = () => {
   useEffect(() => {
     const storedData = localStorage.getItem("userData");
     const user = JSON.parse(storedData);
-    setData([]);
+    setAllIssueData([]);
     setIsLoading(true);
     console.log("fetching.....");
     fetchData(user?.role === "USER" ? user.id : null);
@@ -80,7 +80,7 @@ export const Home = () => {
         </Grid>
         <Divider style={{ margin: "5px" }} />
 
-        {data.length === 0 && (
+        {allIssueData.length === 0 && (
           <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "60vh" }}>
             {isLoading && <Loader size="xl" />}
             {!isLoading && (
@@ -94,10 +94,10 @@ export const Home = () => {
           <Switch defaultChecked style={{ float: "right" }} labelPosition="left" label="View Table" size="sm" onChange={(event) => setDisplayTable(event.currentTarget.checked)} />
         )}
         <Grid gutter="xs">
-          {data.length > 0 && displayTable && <TableComponent data={data} />}
-          {data.length > 0 &&
+          {allIssueData.length > 0 && displayTable && <TableComponent data={allIssueData} />}
+          {allIssueData.length > 0 &&
             !displayTable &&
-            data.map((item, index) => (
+            allIssueData.map((item, index) => (
               <Grid.Col span={{ lg: 3, md: 3, sm: 4, xl: 3, xs: 6 }} key={index}>
                 <Link key={index} href={`/issue/${item.id}`} style={{ textDecoration: "none" }}>
                   <IssueCard key={index} status={item.status} issueType={item.issueType} assigned={item.assigned} imageUrl={item.imageUrl} id={item.id} />
@@ -152,7 +152,7 @@ function TableComponent({ data }: { data: Record<string, any>[] }) {
   ));
 
   return (
-    <Table>
+    <Table striped highlightOnHover withTableBorder withColumnBorders>
       <Table.Thead>
         <Table.Tr>
           <Table.Th></Table.Th>
